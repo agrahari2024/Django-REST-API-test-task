@@ -1,0 +1,12 @@
+from rest_framework import serializers
+from .models import UserAvailability, Booking
+
+class UserAvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAvailability
+        fields = '__all__'
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'
