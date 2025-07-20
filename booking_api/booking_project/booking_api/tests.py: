@@ -1,0 +1,7 @@
+from django.test import TestCase
+from .models import Booking
+
+class BookingTestCase(TestCase):
+    def test_booking_creation(self):
+        Booking.objects.create(guest_name="John", date="2025-07-20", start_time="10:00", end_time="10:30")
+        self.assertEqual(Booking.objects.count(), 1)
