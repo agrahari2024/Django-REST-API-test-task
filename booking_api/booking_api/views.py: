@@ -1,0 +1,27 @@
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from .models import UserAvailability, Booking
+from .serializers import UserAvailabilitySerializer, BookingSerializer
+from datetime import datetime
+
+class UserAvailabilityViewSet(viewsets.ModelViewSet):
+    queryset = UserAvailability.objects.all()
+    serializer_class = UserAvailabilitySerializer
+
+class BookingViewSet(viewsets.ModelViewSet):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        date = data['date']
+        start_time = datetime.strptime(data['start_time'], "%H:%M").time()
+        end_time = datetime.strptime(data['end_time'], "%H:%M").time()
+
+        # Check for overlaps
+        existing = Booking.objects.filter(date=date)
+        for b in existing:
+            if max(b.start_time, start_time) < min(b.end_time, end_time):
+                return Response({"error": "Time slot overlaps with existing booking."}, status=400)
+
+        return super().create(request, *args, **kwargs)
